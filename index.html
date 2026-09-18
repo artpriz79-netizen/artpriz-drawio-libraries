@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>ArtPriz Constructor</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#111827;color:#f9fafb;margin:0;display:grid;place-items:center;min-height:100vh}
+    .box{max-width:620px;padding:36px;text-align:center}
+    h1{margin:0 0 14px;font-size:34px}
+    p{color:#cbd5e1;line-height:1.5}
+    a{display:inline-block;margin-top:18px;padding:12px 20px;border-radius:10px;background:#f59e0b;color:#111827;text-decoration:none;font-weight:700}
+    small{display:block;margin-top:18px;color:#94a3b8}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🏆 ArtPriz Constructor</h1>
+    <p>Відкриваємо конструктор кубків із бібліотеками ArtPriz.</p>
+    <a id="open" href="#">Відкрити конструктор</a>
+    <small>Робота зберігається на комп'ютері користувача. Доступ до облікових записів ArtPriz не потрібен.</small>
+  </div>
+  <script>
+    const libraries=["https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/01-fony.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/02-osnovaniya.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/03-nozhka-na-osnovanie.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/04-stoyki.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-01.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-02.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-03.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-04.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/06-verh-kubka-a.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/06-verh-kubka-b.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/07-detalki.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/08-troyki-a.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/08-troyki-b.xml"];
+    const clibs=libraries.map(u=>'U'+encodeURIComponent(u)).join(';');
+    const target='https://app.diagrams.net/?splash=0&libs=0&mode=device&clibs='+clibs;
+    document.getElementById('open').href=target;
+    setTimeout(()=>location.replace(target),700);
+  </script>
+</body>
+</html>
