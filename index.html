@@ -1,165 +1,33 @@
 <!doctype html>
-<html lang="uk">
+<html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>ArtPriz Constructor</title>
   <style>
-    :root{color-scheme:light}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f4f6}
-    body{overflow:hidden}
-    #topbar{height:48px;background:#111827;color:#fff;display:flex;align-items:center;gap:14px;padding:0 16px;box-shadow:0 1px 4px rgba(0,0,0,.22)}
-    #brand{font-weight:700;letter-spacing:.2px}
-    #status{font-size:13px;color:#cbd5e1;flex:1}
-    
-    #editor{width:100%;height:calc(100vh - 48px);border:0;background:#fff}
-    #overlay{position:fixed;inset:48px 0 0 0;display:grid;place-items:center;background:#f8fafc;z-index:3}
-    #card{max-width:560px;padding:30px;text-align:center}
-    #card h1{font-size:25px;margin:0 0 10px}
-    #card p{color:#64748b;line-height:1.5}
-    #error{color:#b91c1c;white-space:pre-wrap}
+    body{font-family:Arial,sans-serif;background:#111827;color:#f9fafb;margin:0;display:grid;place-items:center;min-height:100vh}
+    .box{max-width:620px;padding:36px;text-align:center}
+    h1{margin:0 0 14px;font-size:34px}
+    p{color:#cbd5e1;line-height:1.5}
+    a{display:inline-block;margin-top:18px;padding:12px 20px;border-radius:10px;background:#f59e0b;color:#111827;text-decoration:none;font-weight:700}
+    small{display:block;margin-top:18px;color:#94a3b8}
   </style>
 </head>
 <body>
-  <div id="topbar">
-    <div id="brand">🏆 ArtPriz Constructor</div>
-    <div id="status">Завантаження бібліотек…</div>
-    
+  <div class="box">
+    <h1>🏆 ArtPriz Constructor</h1>
+    <p>Открываем конструктор кубков с библиотеками ArtPriz.</p>
+    <a id="open" href="#">Открыть конструктор</a>
+    <small>Доступ по ссылке. Вход через почту не требуется.</small>
   </div>
-  <div id="overlay">
-    <div id="card">
-      <h1>ArtPriz Constructor</h1>
-      <p id="loading">Готуємо бібліотеки деталей та запускаємо редактор.</p>
-      <p id="error"></p>
-    </div>
-  </div>
-  <iframe id="editor"
-    src="https://embed.diagrams.net/?embed=1&proto=json&spin=1&libraries=1&configure=1&ui=kennedy&noExitBtn=1&saveAndExit=0"
-    allow="clipboard-read; clipboard-write">
-  </iframe>
-
 <script>
-const LIBRARIES = [
-  {id:'artpriz-fony', title:'ФОНЫ', files:['01-fony.xml']},
-  {id:'artpriz-osnovaniya', title:'ОСНОВАНИЯ', files:['02-osnovaniya.xml']},
-  {id:'artpriz-nozhki', title:'НОЖКИ', files:['03-nozhka-na-osnovanie.xml']},
-  {id:'artpriz-stoyki', title:'СТОЙКИ', files:['04-stoyki.xml']},
-  {id:'artpriz-seredina', title:'СЕРЕДИНА КУБКА', files:['05-seredina-01.xml','05-seredina-02.xml','05-seredina-03.xml','05-seredina-04.xml']},
-  {id:'artpriz-verh', title:'ВЕРХ КУБКА', files:['06-verh-kubka-a.xml','06-verh-kubka-b.xml']},
-  {id:'artpriz-detalki', title:'ДЕТАЛЬКИ', files:['07-detalki.xml']},
-  {id:'artpriz-troyki', title:'ТРОЙКИ', files:['08-troyki-a.xml','08-troyki-b.xml']}
-];
-
-const frame = document.getElementById('editor');
-const overlay = document.getElementById('overlay');
-const statusEl = document.getElementById('status');
-const errorEl = document.getElementById('error');
-let drawioConfig = null;
-let initialized = false;
-
-function parseMxLibrary(text) {
-  const trimmed = text.trim();
-  const start = '<mxlibrary>';
-  const end = '</mxlibrary>';
-  if (!trimmed.startsWith(start) || !trimmed.endsWith(end)) {
-    throw new Error('Некоректний формат бібліотеки');
-  }
-  return JSON.parse(trimmed.slice(start.length, -end.length));
-}
-
-async function loadLibraries() {
-  const entries = [];
-  for (const group of LIBRARIES) {
-    let data = [];
-    for (const file of group.files) {
-      const url = '/libraries/' + file;
-      const r = await fetch(url, {credentials:'same-origin', cache:'no-store'});
-      if (!r.ok) throw new Error(file + ': HTTP ' + r.status);
-      data = data.concat(parseMxLibrary(await r.text()));
-    }
-    entries.push({
-      id: group.id,
-      title: {main: group.title},
-      desc: {main: 'ArtPriz — ' + group.title},
-      libs: [{title:{main:group.title}, data}]
-    });
-  }
-
-  return {
-    libraries: [{title:{main:'ArtPriz'}, entries}],
-    defaultLibraries: LIBRARIES.map(x => x.id).join(';'),
-    enabledLibraries: [],
-    enableCustomLibraries: false,
-    appendCustomLibraries: false,
-    expandLibraries: true,
-    sidebarTitles: true,
-    sidebarWidth: 310,
-    sidebarTitleSize: 9,
-    thumbWidth: 92,
-    thumbHeight: 92,
-    defaultGridEnabled: true,
-    defaultPageVisible: true,
-    compressXml: false,
-    settingsName: 'artpriz-constructor'
-  };
-}
-
-function blankDiagram() {
-  return '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
-}
-
-function downloadDrawio(xml, title='ArtPriz-cup.drawio') {
-  const blob = new Blob([xml], {type:'application/xml;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = title;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
-window.addEventListener('message', (event) => {
-  if (event.origin !== 'https://embed.diagrams.net') return;
-  let msg;
-  try { msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data; }
-  catch { return; }
-
-  if (msg.event === 'configure' && drawioConfig) {
-    frame.contentWindow.postMessage(JSON.stringify({action:'configure', config:drawioConfig}), event.origin);
-  } else if (msg.event === 'init' && !initialized) {
-    initialized = true;
-    frame.contentWindow.postMessage(JSON.stringify({
-      action:'load',
-      xml:blankDiagram(),
-      title:'ArtPriz — новий кубок',
-      autosave:0,
-      noExitBtn:1,
-      saveAndExit:0
-    }), event.origin);
-    overlay.style.display='none';
-    statusEl.textContent='Бібліотеки ArtPriz завантажені';
-  } else if (msg.event === 'save' && msg.xml) {
-    downloadDrawio(msg.xml);
-    statusEl.textContent='Файл збережено на комп’ютер';
-  } else if (msg.event === 'export' && msg.data) {
-    // Export is handled by draw.io itself when supported.
-    statusEl.textContent='Експорт готовий';
-  }
-});
-
-(async () => {
-  try {
-    drawioConfig = await loadLibraries();
-    statusEl.textContent='Запуск редактора…';
-  } catch (e) {
-    document.getElementById('loading').textContent='Не вдалося завантажити бібліотеки.';
-    errorEl.textContent=String(e && e.message ? e.message : e);
-    statusEl.textContent='Помилка завантаження';
-  }
-})();
+  const libraries=["https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/01-fony.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/02-osnovaniya.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/03-nozhka-na-osnovanie.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/04-stoyki.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-01.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-02.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-03.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/05-seredina-04.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/06-verh-kubka-a.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/06-verh-kubka-b.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/07-detalki.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/08-troyki-a.xml","https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/08-troyki-b.xml"];
+  const clibs=libraries.map(u=>'U'+encodeURIComponent(u)).join(';');
+  const target='https://app.diagrams.net/?splash=0&libs=0&mode=device&clibs='+clibs;
+  const a=document.getElementById('open');
+  a.href=target;
+  setTimeout(()=>location.replace(target),500);
 </script>
 </body>
 </html>
