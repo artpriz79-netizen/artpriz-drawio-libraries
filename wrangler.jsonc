@@ -1,11 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "artpriz-constructor-direct",
-  "main": "worker.js",
+  "name": "artpriz-constructor",
   "compatibility_date": "2026-09-18",
   "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS",
-    "run_worker_first": true
+    "directory": "./dist"
   }
 }
