@@ -19,8 +19,8 @@ This branch is prepared for a staff-only ArtPriz constructor.
    `artpriz79-netizen/artpriz-drawio-libraries`
 4. Production branch: **secure-access**
 5. Framework preset: **None**
-6. Build command: leave empty
-7. Build output directory: **/**
+6. Build command: **exit 0**
+7. Build output directory: **.**
 8. Deploy.
 
 You will receive an address similar to:
