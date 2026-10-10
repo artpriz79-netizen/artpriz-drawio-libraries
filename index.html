@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>ArtPriz Constructor</title>
+  <title>АРТПРИЗ КОНСТРУКТОР</title>
   <style>
     body{font-family:Arial,sans-serif;background:#111827;color:#f9fafb;margin:0;display:grid;place-items:center;min-height:100vh}
     .box{max-width:620px;padding:36px;text-align:center}
@@ -16,7 +16,7 @@
 </head>
 <body>
   <div class="box">
-    <h1>🏆 ArtPriz Constructor</h1>
+    <h1>🏆 АРТПРИЗ КОНСТРУКТОР</h1>
     <p>Открываем конструктор кубков с библиотеками ArtPriz.</p>
     <a id="open" href="#">Открыть конструктор</a>
     <small>Доступ по ссылке. Вход через почту не требуется.</small>
@@ -33,7 +33,10 @@
     "https://raw.githubusercontent.com/artpriz79-netizen/artpriz-drawio-libraries/main/libraries/09-КОМПЛЕКТУЮЧІ.xml"
   ];
   const clibs=libraries.map(u=>'U'+encodeURIComponent(u)).join(';');
-  const target='https://app.diagrams.net/?splash=0&libs=0&mode=device&clibs='+clibs;
+  const title='АРТПРИЗ КОНСТРУКТОР';
+  const template='<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
+  const target='https://app.diagrams.net/?splash=0&libs=0&mode=device&clibs='+clibs
+    +'&title='+encodeURIComponent(title)+'#R'+encodeURIComponent(template);
   const a=document.getElementById('open');
   a.href=target;
   setTimeout(()=>location.replace(target),500);
