@@ -1,0 +1,56 @@
+name: Remove obsolete ArtPriz library items
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/remove-obsolete-artpriz-items.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove selected library entries
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          path = Path("libraries/09-КОМПЛЕКТУЮЧІ.xml")
+          text = path.read_text(encoding="utf-8")
+          prefix = "<mxlibrary>"
+          suffix = "</mxlibrary>"
+          if not (text.startswith(prefix) and text.endswith(suffix)):
+              raise SystemExit("Unexpected mxlibrary format")
+
+          items = json.loads(text[len(prefix):-len(suffix)])
+          targets = {
+              "Серединка МАЙАМИ №1 H166mm D64mm Gold Red.png",
+              "Серединка МАЙАМИ №2 H141mm D54mm Gold Red.png",
+              "Серединка МАЙАМИ №3 H116mm D44mm Gold Red.png",
+              "Бірюзово-золотий спіральний кубок.png",
+          }
+          before = len(items)
+          items = [item for item in items if item.get("title") not in targets]
+          removed = before - len(items)
+          if removed != 4:
+              raise SystemExit(f"Expected to remove 4 items, removed {removed}")
+
+          path.write_text(
+              prefix + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + suffix,
+              encoding="utf-8",
+          )
+          print(f"Removed {removed} items; {len(items)} remain.")
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "libraries/09-КОМПЛЕКТУЮЧІ.xml"
+          git commit -m "Remove МАЙАМИ parts and turquoise-gold spiral cup"
+          git push
