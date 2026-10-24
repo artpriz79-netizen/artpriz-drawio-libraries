@@ -22,6 +22,12 @@
 - `libraries/07-detalki.xml`
 - `libraries/08-troyki-a.xml`
 - `libraries/09-КОМПЛЕКТУЮЧІ.xml`
+- `libraries/09-КОМПЛЕКТУЮЧІ-2.xml`
+- `libraries/09-КОМПЛЕКТУЮЧІ-3.xml`
+- `libraries/09-КОМПЛЕКТУЮЧІ-4.xml`
+- `libraries/09-КОМПЛЕКТУЮЧІ-5.xml`
+- `libraries/09-КОМПЛЕКТУЮЧІ-6.xml`
+- `ФОНИ.xml`
 
 ## Библиотека № 3 — ЧАШИ
 
